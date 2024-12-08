@@ -61,7 +61,48 @@ begin
             clk         => clk,
             reset       => reset,
             input_spike => spikes_hidden,
-            spikes_out  => spikes_output
+            spikes_out  => spikes_outplibrary IEEE;
+            use IEEE.STD_LOGIC_1164.ALL;
+            use IEEE.FLOAT_pkg.ALL;
+            
+            type FloatArray is array (natural range <>) of IEEE.FLOAT32
+            
+            entity DynamicInputs is
+                generic (
+                    N : integer := 40  -- Number of inputs, default is 40
+                );
+                port (
+                    clk : in STD_LOGIC;
+                    inputs : in STD_LOGIC_VECTOR(N-1 downto 0); 
+                    weights: in FloatArray(0 to N-1);
+                    output : out STD_LOGIC 
+                );
+            end entity DynamicInputs;
+            
+            architecture Behavioral of DynamicInputs is
+                signal neuron_input       : FLOAT32 := TO_FLOAT(0.0, FLOAT32);
+                signal membrane_potential : FLOAT32 := TO_FLOAT(0.0, FLOAT32);
+            begin
+                process(clk)
+                begin
+                    if rising_edge(clk) then
+                        for i in 0 to N-1 loop
+                            if inputs(i) = '1' then
+                                neuron_input := neuron_input + weights(i);
+                            end if;
+                        end loop;
+                        membrane_potential := membrane_potential + TO_FLOAT(0.004, FLOAT32) * (-membrane_potential + 5 * neuron_input)
+            
+                        if membrane_potential > TO_FLOAT(100.0, FLOAT32) then
+                            membrane_potential := TO_FLOAT(0.0, FLOAT32)
+                            output <= '1'
+                        else
+                            output <= '0'
+                        end if;
+                        
+                    end if;
+                end process;
+            end architecture Behavioral;ut
         );
 
     -- Processo para acumular os spikes e determinar a classe
