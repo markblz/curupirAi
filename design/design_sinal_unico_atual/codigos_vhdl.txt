@@ -1,0 +1,275 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity post_synaptic_1 is
+    generic (
+        N : integer := 40  -- Number of inputs, default is 40
+    );
+    port (
+        inputs : in STD_LOGIC_VECTOR(N-1 downto 0); 
+        output : out STD_LOGIC 
+    );
+end entity post_synaptic_1;
+
+architecture Behavioral_1 of post_synaptic_1 is
+    signal neuron_input       : integer := 0;
+    signal membrane_potential : integer := 0;
+    type mem_array is array (0 to N - 1) of integer;
+    constant weights : mem_array := (
+        1581, 2467, 2211,   25,   25,   25,   25,   25,   25,   25,   25, 25,   25,   25,   25,  732, 1866, 2408,  984, 1278, 2321, 6205, 25,   25,   25,   25,   25,   25,   25,   25, 5581, 5045,25, 25,   25,   25,   25,   25,   25,   25
+    );
+    signal output_enable: STD_LOGIC := '0';
+begin
+    process(inputs)
+    begin
+            if output_enable = '0' then
+            for i in 0 to N-1 loop
+                if inputs(N-1 - i) = '1' then -- alinhar a ordem dos pesos com os inputs
+                    neuron_input <= neuron_input + weights(i);
+                end if;
+            end loop;
+            membrane_potential <= membrane_potential +  neuron_input;
+	  end if;
+
+            if membrane_potential > 4000 then
+                output_enable <= '1';
+            else
+                output_enable <= '0';
+            end if;
+    end process;
+	
+	output <= output_enable;
+end architecture Behavioral_1;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity post_synaptic_2 is
+    generic (
+        N : integer := 40  -- Number of inputs, default is 40
+    );
+    port (
+        inputs : in STD_LOGIC_VECTOR(N-1 downto 0); 
+        output : out STD_LOGIC 
+    );
+end entity post_synaptic_2;
+
+architecture Behavioral_2 of post_synaptic_2 is
+    signal neuron_input       : integer := 0;
+    signal membrane_potential : integer := 0;
+    type mem_array is array (0 to N - 1) of integer;
+    constant weights : mem_array := (
+        25,   25,   25, 1769,  997, 1162, 1246,   25,   25,   25, 2006, 2517,   25,  993,   25,   25,   25,   25,   25,   25,   25,   25, 25, 1689, 3162, 4481,   25,   25,   25,   25,   25,   25,   25, 2845, 3286, 6279,   25,   25,   25,   25
+    );
+    signal output_enable: STD_LOGIC := '0';
+begin
+    process(inputs)
+    begin
+            if output_enable = '0' then
+            for i in 0 to N-1 loop
+                if inputs(N-1 - i) = '1' then -- alinhar a ordem dos pesos com os inputs
+                    neuron_input <= neuron_input + weights(i);
+                end if;
+            end loop;
+            membrane_potential <= membrane_potential +  neuron_input;
+	  end if;
+
+            if membrane_potential > 4000 then
+                output_enable <= '1';
+            else
+                output_enable <= '0';
+            end if;
+    end process;
+	
+	output <= output_enable;
+end architecture Behavioral_2;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity post_synaptic_3 is
+    generic (
+        N : integer := 40  -- Number of inputs, default is 40
+    );
+    port (
+        inputs : in STD_LOGIC_VECTOR(N-1 downto 0); 
+        output : out STD_LOGIC 
+    );
+end entity post_synaptic_3;
+
+architecture Behavioral_3 of post_synaptic_3 is
+    signal neuron_input       : integer := 0;
+    signal membrane_potential : integer := 0;
+    type mem_array is array (0 to N - 1) of integer;
+    constant weights : mem_array := (
+        25,   25,   25,   25,  262, 1426, 1062, 1568, 1701, 1330,  482, 25, 2223,   25,   25,   25,   25,   25,   25,   25,   25,   25, 25,   25,   25,   25, 1515, 3735, 2514, 2160,   25,   25,   25, 25,   25,   25, 2021, 4057, 3683, 2633
+    );
+    signal output_enable: STD_LOGIC := '0';
+begin
+    process(inputs)
+    begin
+       if output_enable = '0' then
+            for i in 0 to N-1 loop
+                if inputs(N-1 - i) = '1' then -- alinhar a ordem dos pesos com os inputs
+                    neuron_input <= neuron_input + weights(i);
+                end if;
+            end loop;
+            membrane_potential <= membrane_potential +  neuron_input;
+	  end if;
+
+            if membrane_potential > 4000 then
+                output_enable <= '1';
+            else
+                output_enable <= '0';
+            end if;
+    end process;
+	
+	output <= output_enable;
+end architecture Behavioral_3;
+
+library ieee;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity pre_synaptic is
+    port(
+        clk: in std_logic;
+        enable: in std_logic;
+        time_to_spike: in integer;
+        spike_out: out std_logic
+    );
+end pre_synaptic;
+
+architecture behave of pre_synaptic is
+
+    signal time_counter: integer := 0;
+ 
+begin
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if (enable = '1') and (time_counter <= time_to_spike + 1) then
+                time_counter <= time_counter + 1;
+            end if;
+        end if;
+    end process;
+	spike_out <= '1' when (time_counter = time_to_spike) and (enable = '1') else '0';
+end behave;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.NUMERIC_STD.ALL;
+use std.textio.all;
+use ieee.std_logic_textio.all;
+
+entity snn_iris_sim is
+end snn_iris_sim;
+
+architecture sim of snn_iris_sim is
+    signal clk       : std_logic := '0';
+    signal output_1s   : std_logic;
+    signal output_2s   : std_logic;
+    signal output_3s   : std_logic;
+begin
+
+    clk <= not clk after 10 ns;
+
+    dut: entity work.snn_iris
+        generic map(
+            delays => (0, 0, 393, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 0, 0, 0, 0, 0, 0, 393, 751, 0, 0, 0, 0, 0),
+            enable => ('0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '0', '0', '0', '0', '0')
+        )
+        port map(
+            clk => clk,
+            output_1 => output_1s,
+            output_2 => output_2s,
+            output_3 => output_3s
+        );
+end sim;
+
+package mytypes_pkg is
+    type my_array_t is array (40-1 downto 0) of integer;
+end package mytypes_pkg;
+
+use work.mytypes_pkg.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+
+
+entity snn_iris is
+   generic (
+       delays: my_array_t := (0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390);
+       enable: std_logic_vector(40-1 downto 0) := (others => '1')
+   );
+   port(
+       clk          : in  std_logic; -- input clock 74.25 MHz, video 720p
+       output_1     : out std_logic;
+       output_2     : out std_logic;
+       output_3     : out std_logic;
+       clk_led      : out std_logic
+    );                     
+end snn_iris;
+
+
+architecture behave_iris of snn_iris is
+   signal spike_link: std_logic_vector(40-1 downto 0);
+   signal slow_clk: std_logic;
+   component pre_synaptic is
+       port(
+           clk: in std_logic;
+           enable: in std_logic;
+           time_to_spike: in integer;
+           spike_out: out std_logic
+           
+       );
+   end component;
+   
+   component clock_divider is
+       port(
+           clk_in: in std_logic;
+           clk_out: out std_logic
+       );
+   end component;
+
+begin
+    clk_led <= slow_clk;
+    clock_divider_inst: clock_divider
+        port map(
+            clk_in => clk,
+            clk_out => slow_clk
+        );
+
+   target1: entity work.post_synaptic_1
+       generic map(N => 40)
+       port map(
+           inputs => spike_link,
+           output => output_1
+       );
+   target2: entity work.post_synaptic_2
+       generic map(N => 40)
+       port map(
+           inputs => spike_link,
+           output => output_2
+       );
+   target3: entity work.post_synaptic_3
+       generic map(N => 40)
+       port map(
+           inputs => spike_link,
+           output => output_3
+       );
+
+    
+   
+   pre_synaptic_all: for i in 0 to 40-1 generate
+       pre_synaptic_i: pre_synaptic
+           port map(
+               clk => slow_clk,
+               enable => enable(i),
+               time_to_spike => delays(i),
+               spike_out => spike_link(i)
+           );
+   end generate pre_synaptic_all;
+
+end behave_iris;
